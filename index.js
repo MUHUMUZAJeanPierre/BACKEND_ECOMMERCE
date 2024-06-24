@@ -8,23 +8,25 @@ require('dotenv/config');
 const api = process.env.API_URL;
 
 
-// middleware  && logging our the http request
+// middleware(Checking is everything going to the server before it gets executed)  && logging our the http request
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 const morgan = require('morgan');
 app.use(morgan('tiny'));
+const authJwt = require('./helpers/jwt');
+app.use(authJwt);
 
-const Product = require('./models/product');
 
 // routers
 const productsRouter = require('./routes/products');
 app.use(`${api}/products`, productsRouter);
 const categoryRouter = require('./routes/categories');
 app.use(`${api}/categories`, categoryRouter);
+const userRouter = require('./routes/user');
+app.use(`${api}/users`, userRouter);
 
 
-
-mongoose.connect("mongodb://localhost:27017/eshop").then(() => {
+mongoose.connect(process.env.CONNECTION_STRING).then(() => {
     console.log('Database connection is ready ....');
 }).catch((error) => {
     console.log(error);
